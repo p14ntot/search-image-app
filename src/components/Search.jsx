@@ -56,22 +56,32 @@ const Search = () => {
 
 
 
-
-
     const getMorePhotos = async () => {
         try {
             const nextPage = page + 1;
             if (nextPage <= totalPages) {
-                const response = await fetch(`https://api.unsplash.com/search/photos?query=${keyword}&page=${nextPage}&client_id=${access_key}`);
+                let response;
+                if (color !== '' && orientation !== '') {
+                    response = await fetch(`https://api.unsplash.com/search/photos?query=${keyword}&page=${nextPage}&color=${color}&orientation=${orientation}&client_id=${access_key}`);
+                } else if (color !== '' && orientation === '') {
+                    response = await fetch(`https://api.unsplash.com/search/photos?query=${keyword}&page=${nextPage}&color=${color}&client_id=${access_key}`);
+                } else if (color === '' && orientation !== '') {
+                    response = await fetch(`https://api.unsplash.com/search/photos?query=${keyword}&page=${nextPage}&orientation=${orientation}&client_id=${access_key}`);
+                }
+                else {
+                    response = await fetch(`https://api.unsplash.com/search/photos?query=${keyword}&page=${nextPage}&client_id=${access_key}`);
+                }
                 const data = await response.json();
                 setPhotos([...photos, ...data.results]);
                 setPage(nextPage);
                 if (nextPage < totalPages) { setLoadMore(true) } else { setLoadMore(false) }
             }
+    
         } catch (error) {
             console.error(`Download error: ${error.message}`);
         }
     };
+    
 
 
 
@@ -151,6 +161,16 @@ const Search = () => {
 };
 
 export default Search;
+
+
+
+
+
+
+
+
+
+
 
 
 
